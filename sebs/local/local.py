@@ -118,7 +118,8 @@ class Local(System):
     def package_code(self, directory: str, language_name: str, benchmark: str) -> Tuple[str, int]:
 
         CONFIG_FILES = {
-            "python": ["handler.py", "requirements.txt", ".python_packages"],
+	#    "python": ["handler.py", "requirements.txt", ".python_packages"],
+            "python": ["handler.py", "requirements.txt", ".python_packages", "_mman_cffi.c", "_mman_cffi.o", "_mman_cffi.cpython-38-x86_64-linux-gnu.so"],
             "nodejs": ["handler.js", "package.json", "node_modules"],
         }
         package_config = CONFIG_FILES[language_name]

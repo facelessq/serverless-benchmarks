@@ -1,10 +1,12 @@
 
 import datetime, json, os, uuid
-
 from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.models import resnet50
+
+from _mman_cffi import ffi,lib
+import sys
 
 from . import storage
 client = storage.storage.get_instance()
@@ -13,7 +15,7 @@ SCRIPT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 class_idx = json.load(open(os.path.join(SCRIPT_DIR, "imagenet_class_index.json"), 'r'))
 idx2label = [class_idx[str(k)][1] for k in range(len(class_idx))]
 model = None
-
+pagesize = 4096
 
 def handler(event):
   
@@ -44,7 +46,14 @@ def handler(event):
         model_download_end = model_download_begin
         model_process_begin = datetime.datetime.now()
         model_process_end = model_process_begin
-   
+    
+    size = sys.getsizeof(model)
+    size_round_up = (size + pagesize - 1) & ~(pagesize - 1)
+    addr = id(model) & ~(pagesize - 1);
+    result = lib.usm_madvise(addr, size_round_up)
+    if (result < 0):
+        print("madvise failed")
+
     process_begin = datetime.datetime.now()
     input_image = Image.open(image_path)
     preprocess = transforms.Compose([
