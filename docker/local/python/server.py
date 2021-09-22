@@ -11,7 +11,8 @@ CODE_LOCATION='code'
 @route('/', method='POST')
 def flush_log():
     begin = datetime.datetime.now()
-    from function import function
+    #from function import function
+    import function
     end = datetime.datetime.now()
     # FIXME: measurements?
     ret = function.handler(request.json)
@@ -27,6 +28,7 @@ def flush_log():
     }
 
 sys.path.append(os.path.join(CODE_LOCATION))
+sys.path.append(os.path.join(CODE_LOCATION, 'function/'))
 sys.path.append(os.path.join(CODE_LOCATION, '.python_packages/lib/site-packages/'))
 run(host='0.0.0.0', port=int(sys.argv[1]), debug=True)
 

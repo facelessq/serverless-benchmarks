@@ -235,7 +235,7 @@ class Benchmark(LoggingBase):
 
     def copy_code(self, output_dir):
         FILES = {
-            "python": ["*.py", "requirements.txt*"],
+            "python": ["*.py", "requirements.txt*", "*.c", "*.dll", "*.so", "*.o"],
             "nodejs": ["*.js", "package.json"],
         }
         path = os.path.join(self.benchmark_path, self.language_name)

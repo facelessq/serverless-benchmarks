@@ -5,7 +5,7 @@
     "download_results": false,
     "runtime": {
       "language": "python",
-      "version": "3.6"
+      "version": "3.8"
     },
     "type": "invocation-overhead",
     "perf-cost": {

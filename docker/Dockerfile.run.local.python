@@ -12,13 +12,17 @@ RUN deps=''\
   && apt-get install -y curl net-tools sudo ${deps}\
   && apt-get purge -y --auto-remove ${deps}\
   && pip3 install cffi minio bottle
-RUN useradd -u ${UID} -m ${USER}\
-    # Let the user use sudo
-    && usermod -aG sudo ${USER}\
-    # Set correct permission on home directory
-    && chown -R ${USER}:${USER} ${HOME}\
-    # Enable non-password use of sudo
-    && echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/dont-prompt-$USER-for-password
+#RUN useradd -u ${UID} -m ${USER}\
+#    # Let the user use sudo
+#    && usermod -aG sudo ${USER}\
+#    # Set correct permission on home directory
+#    && chown -R ${USER}:${USER} ${HOME}\
+#    # Enable non-password use of sudo
+#    && echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/dont-prompt-$USER-for-password
+RUN useradd -m ${USER}
+RUN usermod -aG sudo ${USER}
+RUN chown -R ${USER}:${USER} ${HOME}
+RUN echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/dont-prompt-$USER-for-password
 RUN chown -R ${USER}:${USER} ${HOME}
 
 
