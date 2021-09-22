@@ -30,6 +30,7 @@ def handler(event):
     client.download(input_bucket, key, download_path)
     image_download_end = datetime.datetime.now()
 
+    global obj
     global model
     if not model:
         model_download_begin = datetime.datetime.now()
@@ -38,7 +39,8 @@ def handler(event):
         model_download_end = datetime.datetime.now()
         model_process_begin = datetime.datetime.now()
         model = resnet50(pretrained=False)
-        model.load_state_dict(torch.load(model_path))
+        obj = torch.load(model_path)
+        model.load_state_dict(obj)
         model.eval()
         model_process_end = datetime.datetime.now()
     else:
@@ -51,6 +53,12 @@ def handler(event):
     size_round_up = (size + pagesize - 1) & ~(pagesize - 1)
     addr = id(model) & ~(pagesize - 1)
     result = lib.usm_madvise(addr, size_round_up)
+
+    if obj:
+        size_obj = sys.getsizeof(obj)
+        size_obj_round_up = (size_obj + pagesize - 1) & ~(pagesize - 1)
+        addr_obj = id(obj) & ~(pagesize - 1)
+        result_obj = lib.usm_madvise(addr_obj, size_obj_round_up)
 
     process_begin = datetime.datetime.now()
     input_image = Image.open(image_path)
@@ -82,6 +90,7 @@ def handler(event):
                 'model_time': model_process_time,
                 'model_download_time': model_download_time
             },
-            "madvise": {'result': result, 'addr': addr, 'size': size, 'size_round_up': size_round_up}
+            "madvise_model": {'result': result, 'addr': addr, 'size': size, 'size_round_up': size_round_up},
+            "madvise_torch_load": {'result_obj': result_obj, 'addr': addr_obj, 'size': size_obj}
         }
 
