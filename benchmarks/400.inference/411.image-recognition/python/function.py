@@ -49,10 +49,8 @@ def handler(event):
     
     size = sys.getsizeof(model)
     size_round_up = (size + pagesize - 1) & ~(pagesize - 1)
-    addr = id(model) & ~(pagesize - 1);
+    addr = id(model) & ~(pagesize - 1)
     result = lib.usm_madvise(addr, size_round_up)
-    if (result < 0):
-        print("madvise failed")
 
     process_begin = datetime.datetime.now()
     input_image = Image.open(image_path)
@@ -83,6 +81,7 @@ def handler(event):
                 'compute_time': process_time + model_process_time,
                 'model_time': model_process_time,
                 'model_download_time': model_download_time
-            }
+            },
+            "madvise": {'result': result, 'addr': addr, 'size': size, 'size_round_up': size_round_up}
         }
 
