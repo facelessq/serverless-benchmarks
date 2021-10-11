@@ -30,6 +30,7 @@ def handler(event):
     client.download(input_bucket, key, download_path)
     image_download_end = datetime.datetime.now()
 
+    global obj
     global model
     if not model:
         model_download_begin = datetime.datetime.now()
@@ -38,7 +39,8 @@ def handler(event):
         model_download_end = datetime.datetime.now()
         model_process_begin = datetime.datetime.now()
         model = resnet50(pretrained=False)
-        model.load_state_dict(torch.load(model_path))
+        obj = torch.load(model_path)
+        model.load_state_dict(obj)
         model.eval()
         model_process_end = datetime.datetime.now()
     else:
