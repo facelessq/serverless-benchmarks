@@ -110,7 +110,9 @@ def handler(event):
                             print("madvise ret < 0")
                 test(param)
 
+    madvise_begin = datetime.datetime.now()
     test(model)
+    madvise_end = datetime.datetime.now()
     process_begin = datetime.datetime.now()
     input_image = Image.open(image_path)
     preprocess = transforms.Compose([
@@ -133,16 +135,16 @@ def handler(event):
     model_download_time = (model_download_end - model_download_begin) / datetime.timedelta(microseconds=1)
     model_process_time = (model_process_end - model_process_begin) / datetime.timedelta(microseconds=1)
     process_time = (process_end - process_begin) / datetime.timedelta(microseconds=1)
-    total_time = (process_end - handler_begin) / datetime.timedelta(microseconds=1)
+    madvise_time = (madvise_end - madvise_begin) / datetime.timedelta(microseconds=1)
+    handler_time = (process_end - handler_begin) / datetime.timedelta(microseconds=1)
     return {
             'result': {'idx': index.item(), 'class': ret},
             'measurement': {
                 'download_time': download_time + model_download_time,
                 'compute_time': process_time + model_process_time,
                 'model_time': model_process_time,
-                'model_download_time': model_download_time
-            },
-            "madvise_model": {'result': result, 'addr': addr, 'size': size, 'size_round_up': size_round_up},
-            "madvise_torch_load": {'result_obj': result_obj, 'addr': addr_obj, 'size': size_obj}
+                'model_download_time': model_download_time,
+                'madvise_time': madvise_time,
+                'handler_time': handler_time
+            }
         }
-
