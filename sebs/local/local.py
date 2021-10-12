@@ -119,7 +119,7 @@ class Local(System):
 
         CONFIG_FILES = {
 	#    "python": ["handler.py", "requirements.txt", ".python_packages"],
-            "python": ["handler.py", "requirements.txt", ".python_packages", "_mman_cffi.c", "_mman_cffi.o", "_mman_cffi.cpython-38-x86_64-linux-gnu.so"],
+            "python": ["handler.py", "requirements.txt", ".python_packages", "_mman_cffi.c", "_mman_cffi.o", "_mman_cffi.cpython-36m-x86_64-linux-gnu.so"],
             "nodejs": ["handler.js", "package.json", "node_modules"],
         }
         package_config = CONFIG_FILES[language_name]
@@ -158,7 +158,7 @@ class Local(System):
             image=container_name,
             command=f"python3 server.py {self.DEFAULT_PORT}",
             volumes={
-                code_package.code_location: {"bind": os.path.join(home_dir, "code"), "mode": "ro"}
+                code_package.code_location: {"bind": os.path.join(home_dir, "code"), "mode": "rw"}
             },
             environment=environment,
             # FIXME: make CPUs configurable
