@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.models import resnet50
-# from memory_profiler import profile
+from memory_profiler import profile
 
 from _mman_cffi import ffi,lib
 import sys
@@ -19,7 +19,7 @@ idx2label = [class_idx[str(k)][1] for k in range(len(class_idx))]
 model = None
 pagesize = 4096
 
-# @profile
+@profile
 def handler(event):
     handler_begin = datetime.datetime.now()
     model_bucket = event.get('bucket').get('model')
