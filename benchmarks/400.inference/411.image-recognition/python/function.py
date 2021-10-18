@@ -4,6 +4,7 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.models import resnet50
+# from memory_profiler import profile
 
 from _mman_cffi import ffi,lib
 import sys
@@ -18,6 +19,7 @@ idx2label = [class_idx[str(k)][1] for k in range(len(class_idx))]
 model = None
 pagesize = 4096
 
+# @profile
 def handler(event):
     handler_begin = datetime.datetime.now()
     model_bucket = event.get('bucket').get('model')
@@ -31,7 +33,6 @@ def handler(event):
     client.download(input_bucket, key, download_path)
     image_download_end = datetime.datetime.now()
 
-    global obj
     global model
     if not model:
         model_download_begin = datetime.datetime.now()
@@ -40,8 +41,7 @@ def handler(event):
         model_download_end = datetime.datetime.now()
         model_process_begin = datetime.datetime.now()
         model = resnet50(pretrained=False)
-        obj = torch.load(model_path)
-        model.load_state_dict(obj)
+        model.load_state_dict(torch.load(model_path))
         model.eval()
         model_process_end = datetime.datetime.now()
     else:
